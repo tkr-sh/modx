@@ -112,7 +112,7 @@ pub fn modx(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTok
     };
 
     quote! {
-        #[derive(Debug, Copy, Clone)]
+        #[derive(Debug, Copy, Clone, PartialEq)]
         struct #struct_name
             #signal_fields
 
