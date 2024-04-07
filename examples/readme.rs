@@ -1,9 +1,9 @@
-# modx
+use {dioxus::prelude::*, modx::modx};
 
-modx is an experimental way to handle states with structs in Dioxus inspired by [mobx](https://mobx.js.org/README.html).
+fn main() {
+    launch(app);
+}
 
-
-```rs
 #[modx(Default)]
 struct CounterStore {
     count: i64,
@@ -27,4 +27,3 @@ fn app() -> Element {
         "{store.count}"
     }
 }
-```
