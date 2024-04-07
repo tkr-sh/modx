@@ -1,0 +1,15 @@
+array_width = 40
+combine_control_expr = false
+edition = "2021"
+match_block_trailing_comma = true
+newline_style = "Unix"
+reorder_impl_items = true
+
+# Nightly (cargo +nightly fmt)
+force_multiline_blocks = true
+binop_separator = "Back"
+hex_literal_case = "Lower"
+imports_layout = "HorizontalVertical"
+imports_granularity = "One"
+group_imports = "StdExternalCrate"
+struct_field_align_threshold = 50
