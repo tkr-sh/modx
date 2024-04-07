@@ -111,7 +111,7 @@ pub fn modx(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTok
         quote!()
     };
 
-    let ok: OriginalTokenStream = quote! {
+    quote! {
         #[derive(Debug, Copy, Clone)]
         struct #struct_name
             #signal_fields
@@ -128,11 +128,7 @@ pub fn modx(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTok
 
         #impl_default
     }
-    .into();
-
-    println!("{:#?}", ok.to_string());
-
-    ok
+    .into()
 }
 
 fn remove_delimiter_and_pass(stream: TokenStream) -> Option<TokenStream> {
