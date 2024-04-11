@@ -2,7 +2,7 @@
 name = "modx"
 version = "0.0.1"
 edition = "2021"
-license = "GNU General Public License version 3"
+license = "GPL-3.0-or-later"
 description = "A way to handle states with structs in Dioxus inspired by mobx"
 repository = "https://github.com/tkr-sh/modx"
 documentation = "https://github.com/tkr-sh/modx"
