@@ -91,7 +91,12 @@ pub fn modx(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTok
     let impl_default = if derive_from.contains(&"Default".to_string()) {
         let default_values = all_idents_types.iter().map(|(ident, ty)| {
             let ty_corrected = quote!(#ty).to_string().replace("<", "::<");
-            let parsed_type: syn::Type = syn::parse_str(&ty_corrected).unwrap();
+            let parsed_type: syn::Type = match syn::parse_str(&ty_corrected) {
+                Ok(t) => t,
+                Err(why) => {
+                    return why.to_compile_error().into();
+                },
+            };
 
             quote! {
                 #ident: use_signal(|| #parsed_type::default()),
