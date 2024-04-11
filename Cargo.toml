@@ -1,7 +1,15 @@
 [package]
 name = "modx"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
+license = "GPL3"
+description = "A way to handle states with structs in Dioxus inspired by mobx"
+repository = "https://github.com/tkr-sh/modx"
+documentation = "https://github.com/tkr-sh/modx"
+readme = "README.md"
+keywords = ["dioxus", "wasm", "state", "mobx", "redux"]
+categories = ["web-programming", "wasm", "gui", "api-bindings"]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
