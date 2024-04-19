@@ -307,6 +307,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
 /// }
 /// ```
 ///
+/// ## Attributes
 /// - Every attributes passed in the `resource` procedural macro needs to be implemented as a function
 /// in this particular struct and also being a field of this struct with the proper type.
 ///
@@ -408,6 +409,7 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
 /// )
 /// ```
 ///
+/// ## Attributes
 /// This procedural macro automatically create a struct with the same name as the original struct +
 /// Props in suffix, that will have in field, all the props defined in the #[modx:props] macro.
 ///
