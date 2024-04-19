@@ -1,6 +1,6 @@
 [package]
 name = "modx"
-version = "0.0.1"
+version = "0.1.0"
 edition = "2021"
 license = "GPL-3.0-or-later"
 description = "A way to handle states with structs in Dioxus inspired by mobx"
@@ -20,6 +20,9 @@ syn = { version = "2.0.58", features = ["full"] }
 
 [dev-dependencies]
 dioxus = { version = "0.5.1", features = ["desktop"] }
+reqwest = { version = "0.12.3", features = ["json"] }
+serde = "1.0.197"
+tokio = { version = "1", features = ["full"]}
 
 [lib]
 proc-macro = true

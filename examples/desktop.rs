@@ -1,10 +1,10 @@
-use {dioxus::prelude::*, modx::modx};
+use {dioxus::prelude::*, modx::store};
 
 fn main() {
     launch(app);
 }
 
-#[modx(Default)]
+#[store]
 struct TodoStore {
     tasks: Vec<String>,
     value: String,
@@ -26,7 +26,7 @@ impl TodoStore {
 }
 
 fn app() -> Element {
-    let mut store = TodoStore::default();
+    let mut store = TodoStore::new();
 
     rsx!(
         input {

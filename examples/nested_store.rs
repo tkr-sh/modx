@@ -1,4 +1,4 @@
-use {dioxus::prelude::*, modx::modx};
+use {dioxus::prelude::*, modx::{props, store}};
 
 fn main() {
     launch(app);
@@ -6,13 +6,15 @@ fn main() {
 
 
 // CoutnerS
-#[modx]
+#[props(counters)]
+#[store]
 struct CountersStore {
     counters: Vec<CounterStore>,
 }
 
 // Counter
-#[modx(Default)]
+#[derive(Debug, PartialEq, Eq)]
+#[store]
 struct CounterStore {
     count: i64,
 }
@@ -48,9 +50,9 @@ fn my_button(mut props: StoreProps) -> Element {
 }
 
 fn app() -> Element {
-    let a = CounterStore::default();
-    let b = CounterStore::default();
-    let store = CountersStore::new_signal(vec![a, b]);
+    let a = CounterStore::new();
+    let b = CounterStore::new();
+    let store = CountersStore::new(CountersStoreProps { counters: vec![a, b] });
 
     rsx! {
         my_button { store: store.counters()[0] }

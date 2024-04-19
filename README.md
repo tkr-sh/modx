@@ -4,7 +4,7 @@ modx is an experimental way to handle states with structs in Dioxus inspired by 
 
 
 ```rs
-#[modx(Default)]
+#[store(Default)]
 struct CounterStore {
     count: i64,
 }
@@ -28,3 +28,16 @@ fn app() -> Element {
     }
 }
 ```
+
+
+## Development progress
+
+In the near future, most of the hooks should be rewrote to work with modx.
+
+Here is the current status:
+
+- [X] Signals
+- [X] Props
+- [X] Resources
+- [ ] Memo
+- [ ] Server future
