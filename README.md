@@ -20,7 +20,7 @@ impl CounterStore {
 }
 
 fn app() -> Element {
-    let mut store = CounterStore::default();
+    let mut store = CounterStore::new();
     rsx! {
         button { onclick: move |_| store.inc(), "+1" }
         button { onclick: move |_| store.dec(), "-1" }
