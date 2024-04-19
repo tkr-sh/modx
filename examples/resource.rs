@@ -1,5 +1,8 @@
-use {dioxus::prelude::*, modx::{props, resource, store}};
-use serde::Deserialize;
+use {
+    dioxus::prelude::*,
+    modx::{props, resource, store},
+    serde::Deserialize,
+};
 
 fn main() {
     launch(app);
@@ -10,7 +13,7 @@ fn main() {
 #[store(Default)]
 struct CatStore {
     number_of_cats: usize,
-    fetch_cat: Result<ApiResponse, reqwest::Error>,
+    fetch_cat:      Result<ApiResponse, reqwest::Error>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -33,7 +36,6 @@ impl CatStore {
         }
     }
 }
-
 
 fn app() -> Element {
     let mut store = CatStore::new(CatStoreProps { number_of_cats: 1 });

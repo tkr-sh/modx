@@ -1,9 +1,11 @@
-use {dioxus::prelude::*, modx::{props, store}};
+use {
+    dioxus::prelude::*,
+    modx::{props, store},
+};
 
 fn main() {
     launch(app);
 }
-
 
 // CoutnerS
 #[props(counters)]
@@ -29,14 +31,12 @@ impl CounterStore {
     }
 }
 
-
 #[derive(PartialEq, Props, Clone)]
 struct StoreProps {
-    store: CounterStore
+    store: CounterStore,
 }
 
 fn my_button(mut props: StoreProps) -> Element {
-
     rsx! {
         button {
             onclick: move |_| props.store.inc(),
@@ -52,7 +52,9 @@ fn my_button(mut props: StoreProps) -> Element {
 fn app() -> Element {
     let a = CounterStore::new();
     let b = CounterStore::new();
-    let store = CountersStore::new(CountersStoreProps { counters: vec![a, b] });
+    let store = CountersStore::new(CountersStoreProps {
+        counters: vec![a, b],
+    });
 
     rsx! {
         my_button { store: store.counters()[0] }

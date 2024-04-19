@@ -1,11 +1,15 @@
-use std::str::FromStr;
 use {
     proc_macro::TokenStream as OriginalTokenStream,
     proc_macro2::TokenStream,
     quote::quote,
-    std::collections::HashSet,
+    std::{collections::HashSet, str::FromStr},
     syn::{
-        parse::{Parse, ParseStream}, parse_macro_input, punctuated::Punctuated, DeriveInput, Ident, Token
+        parse::{Parse, ParseStream},
+        parse_macro_input,
+        punctuated::Punctuated,
+        DeriveInput,
+        Ident,
+        Token,
     },
 };
 
@@ -23,7 +27,6 @@ impl Parse for Args {
     }
 }
 
-
 #[derive(PartialEq, Eq)]
 enum TypeOfField {
     Signal,
@@ -31,7 +34,6 @@ enum TypeOfField {
     // ServerFuture,
     Props,
 }
-
 
 /// Declare a struct as a modx store.
 ///
@@ -150,15 +152,16 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
     // Implement the automatic clone
     let impl_signal_idents = all_idents_types.iter().map(|(ident, ty, type_of_field)| {
         match type_of_field {
-            TypeOfField::Signal | TypeOfField::Props =>
+            TypeOfField::Signal | TypeOfField::Props => {
                 quote! {
                     impl #struct_name {
                         pub fn #ident(&self) -> #ty {
                             self.#ident.read().clone()
                         }
                     }
-                },
-            _ => quote! {}
+                }
+            },
+            _ => quote! {},
         }
     });
 
@@ -186,7 +189,6 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
             }
         });
 
-
         // The resources that we need to assign just after creation.
         // We NEED to do that because for now, its uninialized with `unsafe { std::mem::zeroed() }`
         let alter_resources = all_idents_types.iter().map(|(ident, _, type_of_field)| {
@@ -196,8 +198,6 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
                 quote!{}
             }
         });
-
-
 
         // If there is no field that should be used as a props, we just return the default struct
         // that takes no parameter.
@@ -225,12 +225,13 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
                 .collect::<Vec<_>>();
 
             let structprops_name = quote!(#struct_name).to_string();
-            let structprops_name: syn::Type = match syn::parse_str(&format!("{structprops_name}Props")) {
-                Ok(t) => t,
-                Err(why) => {
-                    return why.to_compile_error().into();
-                },
-            };
+            let structprops_name: syn::Type =
+                match syn::parse_str(&format!("{structprops_name}Props")) {
+                    Ok(t) => t,
+                    Err(why) => {
+                        return why.to_compile_error().into();
+                    },
+                };
 
             // Implement default
             quote! {
@@ -253,8 +254,6 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
         }
     };
 
-
-
     quote! {
         #[derive(Copy, Clone)]
         struct #struct_name
@@ -266,7 +265,6 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
     }
     .into()
 }
-
 
 /// Get resources with a function
 ///
@@ -347,8 +345,10 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
         }
     }
 
-
-    let data = item.clone().into_iter().collect::<Vec<proc_macro::TokenTree>>();
+    let data = item
+        .clone()
+        .into_iter()
+        .collect::<Vec<proc_macro::TokenTree>>();
     let mut proc_macro_attributes = vec![];
     let mut i = 0;
     while let Some(proc_macro::TokenTree::Punct(punct)) = data.get(i) {
@@ -360,11 +360,9 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
         }
     }
 
-
-
     let attributes_string = proc_macro_attributes
         .iter()
-        .map(|proc_macro_attribute|
+        .map(|proc_macro_attribute| {
             match OriginalTokenStream::from_str(&proc_macro_attribute.clone()) {
                 Ok(v) => v.into(),
                 // Fix with a better error
@@ -373,24 +371,20 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
                         compile_error!("A bad proc_macro_attr was found: {proc_macro_attribute}");
                     })
                     .into();
-                }
+                },
             }
-        )
+        })
         .collect::<Vec<TokenStream>>();
 
-
-    let data = quote!{
+    let data = quote! {
         #(#attributes_string)*
         // #attributes_tokens
         struct #struct_name
             #renamed_fields
     };
 
-
-
     data.into()
 }
-
 
 /// Add some props to a modx store
 ///
@@ -452,8 +446,10 @@ pub fn props(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTo
         }
     }
 
-
-    let data = item.clone().into_iter().collect::<Vec<proc_macro::TokenTree>>();
+    let data = item
+        .clone()
+        .into_iter()
+        .collect::<Vec<proc_macro::TokenTree>>();
 
     let mut proc_macro_attributes = vec![];
     let mut i = 0;
@@ -466,10 +462,9 @@ pub fn props(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTo
         }
     }
 
-
     let attributes_string = proc_macro_attributes
         .iter()
-        .map(|proc_macro_attribute|
+        .map(|proc_macro_attribute| {
             match OriginalTokenStream::from_str(&proc_macro_attribute.clone()) {
                 Ok(v) => v.into(),
                 // Fix with a better error
@@ -478,19 +473,17 @@ pub fn props(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTo
                         compile_error!("A bad proc_macro_attr was found: {proc_macro_attribute}");
                     })
                     .into();
-                }
+                },
             }
-        )
+        })
         .collect::<Vec<TokenStream>>();
 
-    let data = quote!{
+    let data = quote! {
         #(#attributes_string)*
 
         struct #struct_name
             #renamed_fields
     };
-
-
 
     data.into()
 }

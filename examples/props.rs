@@ -1,4 +1,7 @@
-use {dioxus::prelude::*, modx::{store, props}};
+use {
+    dioxus::prelude::*,
+    modx::{props, store},
+};
 
 fn main() {
     launch(app);
@@ -6,7 +9,7 @@ fn main() {
 
 #[store]
 struct Shop {
-    input: String,
+    input:        String,
     items_string: Vec<String>,
 }
 
@@ -17,12 +20,9 @@ impl Shop {
     }
 
     fn get_items(&self) -> Vec<Item> {
-        self
-            .items_string()
+        self.items_string()
             .iter()
-            .map(|item| {
-                Item::new(ItemProps { name: item.clone() })
-            })
+            .map(|item| Item::new(ItemProps { name: item.clone() }))
             .collect::<Vec<_>>()
     }
 
@@ -31,12 +31,11 @@ impl Shop {
     }
 }
 
-
 #[derive(Debug)]
 #[props(name)]
 #[store]
 struct Item {
-    name: String,
+    name:          String,
     number_to_buy: usize,
 }
 
@@ -52,11 +51,8 @@ impl Item {
     }
 }
 
-
-
 fn app() -> Element {
     let mut shop = Shop::new();
-
 
     rsx!(
         ul {
