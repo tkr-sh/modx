@@ -27,9 +27,10 @@
     </a>
 </p>
 
-modx is an experimental way to handle states with structs in Dioxus inspired by [mobx](https://mobx.js.org/README.html).
+[modx](https://github.com/tkr-sh/modx) is an experimental way to handle states with structs in [Dioxus](https://dioxuslabs.com/) inspired by [mobx](https://mobx.js.org/README.html).
 
 
+## Example
 ```rs
 #[modx::store]
 struct CounterStore {
@@ -55,6 +56,21 @@ fn app() -> Element {
     }
 }
 ```
+
+
+## Documentation
+Documentation can be found at https://docs.rs/modx
+
+## More examples
+There are some examples at `~/examples` so you can see how to use `modx` and how it behaves.
+
+You can run an example with:
+
+```sh
+cargo run --example this_example
+```
+
+with `this_example` being the name of the file (without the extension)
 
 
 ## Development progress
