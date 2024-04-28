@@ -96,6 +96,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
     let input = parse_macro_input!(clone_item as DeriveInput);
 
     let struct_name = &input.ident;
+    let struct_visibility = &input.vis;
 
     // Get the fields of the struct
     let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
@@ -256,7 +257,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
 
     quote! {
         #[derive(Copy, Clone)]
-        struct #struct_name
+        #struct_visibility struct #struct_name
             #modified_fields
 
         #(#impl_signal_idents)*
@@ -322,6 +323,7 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
     let resource_fields: Vec<String> = args.vars.iter().map(|e| e.to_string()).collect();
 
     let struct_name = &input.ident;
+    let struct_visibility = &input.vis;
 
     // Get the fields of the struct
     let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
@@ -379,8 +381,7 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
 
     let data = quote! {
         #(#attributes_string)*
-        // #attributes_tokens
-        struct #struct_name
+        #struct_visibility struct #struct_name
             #renamed_fields
     };
 
@@ -424,6 +425,7 @@ pub fn props(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTo
     let resource_fields: Vec<String> = args.vars.iter().map(|e| e.to_string()).collect();
 
     let struct_name = &input.ident;
+    let struct_visibility = &input.vis;
 
     // Get the fields of the struct
     let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
@@ -483,7 +485,7 @@ pub fn props(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTo
     let data = quote! {
         #(#attributes_string)*
 
-        struct #struct_name
+        #struct_visibility struct #struct_name
             #renamed_fields
     };
 
