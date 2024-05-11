@@ -237,7 +237,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
             // Implement default
             quote! {
                 #[derive(Debug)]
-                struct #structprops_name {
+                #struct_visibility struct #structprops_name {
                     #(#struct_props_fields)*
                 }
                 impl #struct_name {
