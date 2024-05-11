@@ -206,7 +206,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
             // Implement default
             quote! {
                 impl #struct_name {
-                    pub fn new() -> #struct_name {
+                    pub fn new() -> Self {
                         let mut default_struct = #struct_name {
                             #(#default_values)*
                         };
@@ -252,7 +252,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
             quote! {
                 #structprops
                 impl #struct_name {
-                    pub fn new(props: #structprops_name) -> #struct_name {
+                    pub fn new(props: #structprops_name) -> Self {
                         let mut default_struct = #struct_name {
                             #(#default_values)*
                         };
