@@ -220,11 +220,6 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
         }
         // Else, we create a struct #(#struct_name)Props that takes the props
         else {
-            let struct_props_fields = props_idents
-                .iter()
-                .map(|(ident, ty)| quote! ( #ident: #ty, ))
-                .collect::<Vec<_>>();
-
             let structprops_name = quote!(#struct_name).to_string();
             let structprops_name: syn::Type =
                 match syn::parse_str(&format!("{structprops_name}Props")) {
@@ -234,12 +229,28 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
                     },
                 };
 
-            // Implement default
-            quote! {
+            let (structprops_fields, structprops_field_inits): (Vec<_>, Vec<_>) = props_idents
+                .iter()
+                .map(|(ident, ty)| (quote! ( #ident: #ty, ), quote! ( #ident, )))
+                .unzip();
+
+            let structprops = quote! {
                 #[derive(Debug)]
                 #struct_visibility struct #structprops_name {
-                    #(#struct_props_fields)*
+                    #(#structprops_fields)*
                 }
+                impl #structprops_name {
+                    pub fn new(#(#structprops_fields)*) -> Self {
+                        Self {
+                            #(#structprops_field_inits)*
+                        }
+                    }
+                }
+            };
+
+            // Implement default
+            quote! {
+                #structprops
                 impl #struct_name {
                     pub fn new(props: #structprops_name) -> #struct_name {
                         let mut default_struct = #struct_name {
