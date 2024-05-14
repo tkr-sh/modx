@@ -290,7 +290,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
 /// }
 ///
 /// impl MyStore {
-///     async fn fetch_cat_url() -> Result<String> {
+///     async fn fetch_cat_url(&mut self) -> Result<String> {
 ///         self.number_of_cats += 1;
 ///
 ///         reqwest::get("http://localhost/cat")
