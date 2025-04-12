@@ -185,7 +185,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
                 TypeOfField::Props => quote! {
                     #ident: use_signal(|| props.#ident),
                 },
-                // TODO: Cange case
+                // TODO: Change case
                 _ => quote! { #ident: use_resource(move || async move { unsafe { std::mem::zeroed() } }), },
             }
         });
