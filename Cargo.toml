@@ -1,6 +1,6 @@
 [package]
 name = "modx"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2024"
 license = "LGPL-3.0-or-later"
 description = "A way to handle states with structs in Dioxus inspired by mobx"
