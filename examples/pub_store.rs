@@ -15,5 +15,5 @@ impl CounterStore {
     }
 }
 
-#[allow(dead_code)]
-fn main() {}
+#[allow(dead_code, reason = "Just checking that it compiles")]
+const fn main() {}

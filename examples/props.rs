@@ -16,7 +16,7 @@ struct Shop {
 impl Shop {
     fn add_item(&mut self) {
         self.items_string.push(self.input());
-        self.input.set(String::new())
+        self.input.set(String::new());
     }
 
     fn get_items(&self) -> Vec<Item> {

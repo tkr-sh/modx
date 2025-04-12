@@ -99,12 +99,10 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
     let struct_visibility = &input.vis;
 
     // Get the fields of the struct
-    let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
-        fields
-    } else {
-        return TokenStream::from(quote! {
+    let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data else {
+        return quote! {
             compile_error!("Only structs are supported for this macro");
-        })
+        }
         .into();
     };
 
@@ -115,7 +113,9 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
 
     for field in &mut modified_fields {
         if let Some(ident) = &field.ident {
-            if !ident.to_string().starts_with("_modx_reserved") {
+            let ident_string = ident.to_string();
+
+            if !ident_string.starts_with("_modx_reserved") {
                 // Push the new ident
                 all_idents_types.push((ident.clone(), field.ty.clone(), TypeOfField::Signal));
 
@@ -125,9 +125,9 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
                 // Create the signal
                 let signal_type = quote! { Signal<#field_type> }.into();
                 field.ty = parse_macro_input!(signal_type as syn::Type);
-            } else if ident.to_string().starts_with("_modx_reserved_resource_") {
+            } else if ident_string.starts_with("_modx_reserved_resource_") {
                 // Push the new ident
-                let new_name = ident.to_string().replace("_modx_reserved_resource_", "");
+                let new_name = ident_string.replace("_modx_reserved_resource_", "");
                 let new_ident = Ident::new(&new_name, proc_macro2::Span::call_site());
                 field.ident = Some(new_ident.clone());
                 all_idents_types.push((new_ident, field.ty.clone(), TypeOfField::Resource));
@@ -135,9 +135,9 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
                 let field_type = field.ty.clone();
                 let signal_type = quote! { Resource<#field_type> }.into();
                 field.ty = parse_macro_input!(signal_type as syn::Type);
-            } else if ident.to_string().starts_with("_modx_reserved_props_") {
+            } else if ident_string.starts_with("_modx_reserved_props_") {
                 // Push the new ident
-                let new_name = ident.to_string().replace("_modx_reserved_props_", "");
+                let new_name = ident_string.replace("_modx_reserved_props_", "");
                 let new_ident = Ident::new(&new_name, proc_macro2::Span::call_site());
                 field.ident = Some(new_ident.clone());
                 all_idents_types.push((new_ident.clone(), field.ty.clone(), TypeOfField::Props));
@@ -162,7 +162,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
                     }
                 }
             },
-            _ => quote! {},
+            TypeOfField::Resource => quote! {},
         }
     });
 
@@ -170,11 +170,11 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
     let impl_default = {
         // Convert type to type::default() for every type
         let default_values = all_idents_types.iter().map(|(ident, ty, type_of_field)| {
-            let ty_corrected = quote!(#ty).to_string().replace("<", "::<");
+            let ty_corrected = quote!(#ty).to_string().replace('<', "::<");
             let parsed_type: syn::Type = match syn::parse_str(&ty_corrected) {
                 Ok(t) => t,
                 Err(why) => {
-                    return why.to_compile_error().into();
+                    return why.to_compile_error();
                 },
             };
 
@@ -186,7 +186,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
                     #ident: use_signal(|| props.#ident),
                 },
                 // TODO: Change case
-                _ => quote! { #ident: use_resource(move || async move { unsafe { std::mem::zeroed() } }), },
+                TypeOfField::Resource => quote! { #ident: use_resource(move || async move { unsafe { std::mem::zeroed() } }), },
             }
         });
 
@@ -202,7 +202,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
 
         // If there is no field that should be used as a props, we just return the default struct
         // that takes no parameter.
-        if props_idents.len() == 0 {
+        if props_idents.is_empty() {
             // Implement default
             quote! {
                 impl #struct_name {
@@ -321,7 +321,7 @@ pub fn store(_: OriginalTokenStream, item: OriginalTokenStream) -> OriginalToken
 ///
 /// ## Attributes
 /// - Every attributes passed in the `resource` procedural macro needs to be implemented as a function
-/// in this particular struct and also being a field of this struct with the proper type.
+///   in this particular struct and also being a field of this struct with the proper type.
 ///
 /// - Functions that are concerned by this macro need to be async and shouldn't take any parameter.
 #[proc_macro_attribute]
@@ -331,7 +331,11 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
     let args = parse_macro_input!(attr as Args);
 
     // We'll collect the identifiers from the attributes
-    let resource_fields: Vec<String> = args.vars.iter().map(|e| e.to_string()).collect();
+    let resource_fields: Vec<String> = args
+        .vars
+        .iter()
+        .map(std::string::ToString::to_string)
+        .collect();
 
     let struct_name = &input.ident;
     let struct_visibility = &input.vis;
@@ -340,9 +344,9 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
     let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
         fields
     } else {
-        return TokenStream::from(quote! {
+        return quote! {
             compile_error!("Only structs are supported for this macro");
-        })
+        }
         .into();
     };
 
@@ -353,7 +357,7 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
         if let Some(ident) = &mut field.ident {
             let string_ident = ident.to_string();
             if resource_fields.contains(&string_ident) {
-                let new_name = format!("_modx_reserved_resource_{}", ident.to_string());
+                let new_name = format!("_modx_reserved_resource_{ident}");
                 field.ident = Some(Ident::new(&new_name, proc_macro2::Span::call_site()));
             }
         }
@@ -381,10 +385,9 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
                 Ok(v) => v.into(),
                 // Fix with a better error
                 Err(_why) => {
-                    return TokenStream::from(quote! {
+                    quote! {
                         compile_error!("A bad proc_macro_attr was found: {proc_macro_attribute}");
-                    })
-                    .into();
+                    }
                 },
             }
         })
@@ -422,8 +425,8 @@ pub fn resource(attr: OriginalTokenStream, item: OriginalTokenStream) -> Origina
 /// ```
 ///
 /// ## Attributes
-/// This procedural macro automatically create a struct with the same name as the original struct +
-/// Props in suffix, that will have in field, all the props defined in the #[modx:props] macro.
+/// This procedural macro automatically creates a struct with the same name as the original struct +
+/// `Props` in suffix, that will have in field, all the props defined in the `#[modx::props]` macro.
 ///
 /// Every props is still a signal so you can easily modify them, copy them and see the changes.
 #[proc_macro_attribute]
@@ -433,7 +436,11 @@ pub fn props(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTo
     let args = parse_macro_input!(attr as Args);
 
     // We'll collect the identifiers from the attributes
-    let resource_fields: Vec<String> = args.vars.iter().map(|e| e.to_string()).collect();
+    let resource_fields: Vec<String> = args
+        .vars
+        .iter()
+        .map(std::string::ToString::to_string)
+        .collect();
 
     let struct_name = &input.ident;
     let struct_visibility = &input.vis;
@@ -442,9 +449,9 @@ pub fn props(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTo
     let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
         fields
     } else {
-        return TokenStream::from(quote! {
+        return quote! {
             compile_error!("Only structs are supported for this macro");
-        })
+        }
         .into();
     };
 
@@ -455,7 +462,7 @@ pub fn props(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTo
         if let Some(ident) = &mut field.ident {
             let string_ident = ident.to_string();
             if resource_fields.contains(&string_ident) {
-                let new_name = format!("_modx_reserved_props_{}", ident.to_string());
+                let new_name = format!("_modx_reserved_props_{ident}");
                 field.ident = Some(Ident::new(&new_name, proc_macro2::Span::call_site()));
             }
         }
@@ -484,10 +491,9 @@ pub fn props(attr: OriginalTokenStream, item: OriginalTokenStream) -> OriginalTo
                 Ok(v) => v.into(),
                 // Fix with a better error
                 Err(_why) => {
-                    return TokenStream::from(quote! {
+                    quote! {
                         compile_error!("A bad proc_macro_attr was found: {proc_macro_attribute}");
-                    })
-                    .into();
+                    }
                 },
             }
         })
