@@ -1,15 +1,18 @@
-array_width = 40
-combine_control_expr = false
-edition = "2021"
+# https://github.com/rust-lang/rustfmt
+# Configuration: https://rust-lang.github.io/rustfmt
+
+# Stable
+array_width = 50
+edition = "2024"
 match_block_trailing_comma = true
 newline_style = "Unix"
-reorder_impl_items = true
 
-# Nightly (cargo +nightly fmt)
-force_multiline_blocks = true
+# Nightly
 binop_separator = "Back"
-hex_literal_case = "Lower"
-imports_layout = "HorizontalVertical"
-imports_granularity = "One"
+blank_lines_upper_bound = 3
+combine_control_expr = false
+force_multiline_blocks = true
 group_imports = "StdExternalCrate"
-struct_field_align_threshold = 50
+imports_granularity = "One"
+imports_layout = "HorizontalVertical"
+reorder_impl_items = true

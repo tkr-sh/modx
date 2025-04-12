@@ -1,28 +1,148 @@
 [package]
-name = "modx"
-version = "0.1.4"
-edition = "2024"
-license = "LGPL-3.0-or-later"
-description = "A way to handle states with structs in Dioxus inspired by mobx"
-repository = "https://github.com/tkr-sh/modx"
-documentation = "https://docs.rs/modx/latest/modx/index.html"
-readme = "README.md"
-keywords = ["dioxus", "wasm", "state", "mobx", "redux"]
-categories = ["web-programming", "wasm", "gui", "api-bindings"]
+    categories = ["api-bindings", "gui", "wasm", "web-programming"]
+    description = "A way to handle states with structs in Dioxus inspired by mobx"
+    documentation = "https://docs.rs/modx/latest/modx/index.html"
+    edition = "2024"
+    exclude = ["/examples", "/justfile", "/rustfmt.toml"]
+    keywords = ["dioxus", "mobx", "redux", "state", "wasm"]
+    license = "LGPL-3.0-or-later"
+    name = "modx"
+    readme = "README.md"
+    repository = "https://github.com/tkr-sh/modx"
+    version = "0.1.4"
 
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+    # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-proc-macro2 = "1.0"
-quote = "1.0"
-syn = { version = "2.0", features = ["full"] }
+    proc-macro2 = "1.0"
+    quote = "1.0"
+    syn = { version = "2.0", features = ["full"] }
 
 [dev-dependencies]
-dioxus = { version = "0.6", features = ["desktop"] }
-reqwest = { version = "0.12", features = ["json"] }
-serde = "1.0"
-tokio = { version = "1", features = ["full"] }
+    dioxus = { version = "0.6", features = ["desktop"] }
+    reqwest = { version = "0.12", features = ["json"] }
+    serde = "1.0"
+    tokio = { version = "1", features = ["full"] }
 
 [lib]
-proc-macro = true
+    proc-macro = true
+
+
+# <https://rust-lang.github.io/rust-clippy/master>
+[lints.clippy]
+    # Have false positives
+    borrow_deref_ref = "allow"
+    deref_addrof = "allow"
+    drain_collect = "allow"
+
+    # Based
+    allow_attributes_without_reason = "warn"
+    clear_with_drain = "warn"
+    clone_on_ref_ptr = "warn"
+    cloned_instead_of_copied = "warn"
+    collection_is_never_read = "warn"
+    create_dir = "warn"
+    empty_drop = "warn"
+    empty_enum_variants_with_brackets = "warn"
+    empty_structs_with_brackets = "warn"
+    explicit_into_iter_loop = "warn"
+    filetype_is_file = "warn"
+    filter_map_next = "warn"
+    flat_map_option = "warn"
+    ignored_unit_patterns = "warn"
+    impl_trait_in_params = "warn"
+    index_refutable_slice = "warn"
+    inefficient_to_string = "warn"
+    iter_filter_is_ok = "warn"
+    iter_filter_is_some = "warn"
+    iter_on_empty_collections = "warn"
+    iter_with_drain = "warn"
+    manual_assert = "warn"
+    match_same_arms = "warn"
+    match_wildcard_for_single_variants = "warn"
+    mismatching_type_param_order = "warn"
+    mixed_read_write_in_expression = "warn"
+    mut_mut = "warn"
+    needless_collect = "warn"
+    needless_continue = "warn"
+    needless_raw_string_hashes = "warn"
+    non_std_lazy_statics = "warn"
+    nonstandard_macro_braces = "warn"
+    option_as_ref_cloned = "warn"
+    or_fun_call = "warn"
+    pub_without_shorthand = "deny"
+    redundant_closure_for_method_calls = "warn"
+    self_named_module_files = "deny"
+    semicolon_if_nothing_returned = "warn"
+    significant_drop_in_scrutinee = "warn"
+    single_char_pattern = "warn"
+    str_split_at_newline = "warn"
+    string_to_string = "warn"
+    trait_duplication_in_bounds = "warn"
+    undocumented_unsafe_blocks = "warn"
+    unnested_or_patterns = "warn"
+    unreadable_literal = "warn"
+    unused_async = "warn"
+    unused_peekable = "warn"
+    unused_result_ok = "warn"
+    unused_rounding = "warn"
+    unused_self = "warn"
+    verbose_bit_mask = "warn"
+    verbose_file_reads = "warn"
+
+    # Mid
+    branches_sharing_code = "warn"
+    cfg_not_test = "warn"
+    cognitive_complexity = "warn"
+    comparison_chain = "warn"
+    doc_link_with_quotes = "warn"
+    empty_enum = "warn"
+    equatable_if_let = "warn"
+    if_not_else = "warn"
+    iter_on_single_items = "warn"
+    large_digit_groups = "warn"
+    match_on_vec_items = "warn"
+    negative_feature_names = "warn"
+    option_option = "warn"
+    path_buf_push_overwrite = "warn"
+    redundant_type_annotations = "warn"
+    rest_pat_in_fully_bound_structs = "warn"
+    string_lit_chars_any = "warn"
+    type_repetition_in_bounds = "warn"
+    uninlined_format_args = "warn"
+
+    # Controversial
+    as_conversions = "deny"
+    assigning_clones = "warn"
+    bool_to_int_with_if = "warn"
+    decimal_literal_representation = "warn"       # with clippy.toml `literal-representation-threshold`
+    default_trait_access = "warn"
+    derive_partial_eq_without_eq = "warn"
+    fallible_impl_from = "warn"
+    format_push_string = "warn"
+    from_iter_instead_of_collect = "warn"
+    implicit_clone = "warn"
+    items_after_statements = "warn"
+    literal_string_with_formatting_args = "warn"
+    manual_string_new = "warn"
+    map_unwrap_or = "warn"
+    map_with_unused_argument_over_ranges = "warn"
+    missing_const_for_fn = "warn"
+    needless_for_each = "warn"
+    needless_pass_by_ref_mut = "warn"
+    needless_pass_by_value = "warn"               # Not true everytime tho
+    non_zero_suggestions = "warn"
+    ref_option_ref = "warn"
+    string_lit_as_bytes = "warn"
+    too_long_first_doc_paragraph = "warn"
+    trivial_regex = "warn"
+    unchecked_duration_subtraction = "warn"
+    unnecessary_join = "warn"
+    unwrap_used = "warn"                          # With clippy.toml `allow-unwrap-in-test`
+
+    # Removing
+    enum_variant_names = "allow"
+    too_many_arguments = "allow"
+    type_complexity = "allow"
+    upper_case_acronyms = "allow"
