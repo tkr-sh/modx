@@ -18,7 +18,7 @@ struct CatStore {
 
 #[derive(Deserialize, Debug)]
 struct ApiResponse {
-    _id: String,
+    id: String,
 }
 
 impl CatStore {
@@ -48,7 +48,7 @@ fn app() -> Element {
                         img {
                             max_width: "500px",
                             max_height: "500px",
-                            src: "https://cataas.com/cat/{api_response._id}"
+                            src: "https://cataas.com/cat/{api_response.id}"
                         }
                     }
                     "Wow! An amazing cat! (N°{store.number_of_cats})"
